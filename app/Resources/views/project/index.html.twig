@@ -3,7 +3,7 @@
 {% block body %}
     <h1>Projects list</h1>
 
-    <table>
+    <table class="table">
         <thead>
             <tr>
                 <th>Id</th>
@@ -19,23 +19,17 @@
                 <td>{{ project.repositoryUrl }}</td>
                 <td>{% if project.dateCreated %}{{ project.dateCreated|date('Y-m-d H:i:s') }}{% endif %}</td>
                 <td>
-                    <ul>
-                        <li>
-                            <a href="{{ path('project_show', { 'id': project.id }) }}">show</a>
-                        </li>
-                        <li>
-                            <a href="{{ path('project_edit', { 'id': project.id }) }}">edit</a>
-                        </li>
-                    </ul>
+                    <a class="btn btn-default" href="{{ path('project_show', { 'id': project.id }) }}">show</a>
+                    <a class="btn btn-primary" href="{{ path('project_edit', { 'id': project.id }) }}">edit</a>
                 </td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
 
-    <ul>
-        <li>
-            <a href="{{ path('project_new') }}">Create a new project</a>
+    <ul class="list-group">
+        <li class="list-group-item">
+            <a class="btn btn-success" href="{{ path('project_new') }}">Create a new project</a>
         </li>
     </ul>
 {% endblock %}

@@ -3,7 +3,7 @@
 {% block body %}
     <h1>Project</h1>
 
-    <table>
+    <table class="table">
         <tbody>
             <tr>
                 <th>Id</th>
@@ -20,17 +20,17 @@
         </tbody>
     </table>
 
-    <ul>
-        <li>
+    <div>
+        <p>
             <a href="{{ path('project_index') }}">Back to the list</a>
-        </li>
-        <li>
-            <a href="{{ path('project_edit', { 'id': project.id }) }}">Edit</a>
-        </li>
-        <li>
+        </p>
+        <p>
+            <a class="btn btn-primary" href="{{ path('project_edit', { 'id': project.id }) }}">Edit</a>
+        </p>
+        <div>
             {{ form_start(delete_form) }}
-                <input type="submit" value="Delete">
+                <input class="btn btn-danger" type="submit" value="Delete">
             {{ form_end(delete_form) }}
-        </li>
-    </ul>
+        </div>
+    </div>
 {% endblock %}
