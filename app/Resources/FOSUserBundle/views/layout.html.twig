@@ -10,7 +10,7 @@
         <link rel="icon" href="favicon.ico">
         {% block stylesheets %}{% endblock %}
 
-        <title>{% block title %}Something Clever Here!{% endblock %}</title>
+        <title>{% block title %}SecureCode{% endblock %}</title>
 
         <!-- Latest compiled and minified CSS -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
@@ -24,22 +24,11 @@
     </head>
     <body>
     <div class="container">
-        <div class="pull-right">
-            {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                {{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }} |
-                <p>
-                    <a class="btn btn-default" href="{{ path('fos_user_security_logout') }}">
-                        {{ 'layout.logout'|trans({}, 'FOSUserBundle') }}
-                    </a>
-                </p>
-            {% else %}
-                <p>
-                    <a class="btn btn-primary" href="{{ path('fos_user_security_login') }}">
-                        {{ 'layout.login'|trans({}, 'FOSUserBundle') }}
-                    </a>
-                </p>
-            {% endif %}
-        </div>
+        {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+            {% include "@FOSUser/navbar-logged-in.html.twig" %}
+        {% else %}
+            {% include "@FOSUser/navbar-logged-out.html.twig" %}
+        {% endif %}
 
         {% if app.request.hasPreviousSession %}
             {% for type, messages in app.session.flashbag.all() %}
