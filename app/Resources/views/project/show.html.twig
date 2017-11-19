@@ -10,11 +10,11 @@
             <td>{{ project.id }}</td>
         </tr>
         <tr>
-            <th>Repositoryurl</th>
+            <th>Repository URL</th>
             <td>{{ project.repositoryUrl }}</td>
         </tr>
         <tr>
-            <th>Datecreated</th>
+            <th>Date Created</th>
             <td>{% if project.dateCreated %}{{ project.dateCreated|date('Y-m-d H:i:s') }}{% endif %}</td>
         </tr>
         </tbody>
