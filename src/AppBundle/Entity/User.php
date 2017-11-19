@@ -25,10 +25,10 @@ class User extends BaseUser
 
     /**
      * Many User have Many Projects.
-     * @ManyToMany(targetEntity="Project")
-     * @JoinTable(name="users_projects",
+     * @ManyToMany(targetEntity="Project", inversedBy="users")
+     * @JoinTable(name="user_projects",
      *      joinColumns={@JoinColumn(name="user_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@JoinColumn(name="project_id", referencedColumnName="id", unique=true)}
+     *      inverseJoinColumns={@JoinColumn(name="project_id", referencedColumnName="id")}
      *      )
      */
     private $projects;
@@ -37,5 +37,28 @@ class User extends BaseUser
     {
         parent::__construct();
         $this->projects = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->roles = ['ROLE_USER'];
     }
+
+    /**
+     * @return mixed
+     */
+    public function getProjects()
+    {
+        return $this->projects;
+    }
+
+    /**
+     * @param mixed $projects
+     */
+    public function setProjects($projects)
+    {
+        $this->projects = $projects;
+    }
+
+    public function addProject(Project $project)
+    {
+        $this->projects[] = $project;
+    }
+
 }

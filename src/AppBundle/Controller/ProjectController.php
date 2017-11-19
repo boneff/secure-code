@@ -22,6 +22,8 @@ class ProjectController extends Controller
      */
     public function indexAction()
     {
+        $this->denyAccessUnlessGranted('ROLE_USER', null, 'Unable to access this page!');
+
         $em = $this->getDoctrine()->getManager();
 
         $projects = $em->getRepository('AppBundle:Project')->findAll();
@@ -39,7 +41,12 @@ class ProjectController extends Controller
      */
     public function newAction(Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_USER', null, 'Unable to access this page!');
+        $user = $this->getUser();
+
         $project = new Project();
+        $project->addUser($user);
+        $project->setDateCreated(new \DateTime());
         $form = $this->createForm('AppBundle\Form\ProjectType', $project);
         $form->handleRequest($request);
 
@@ -65,6 +72,8 @@ class ProjectController extends Controller
      */
     public function showAction(Project $project)
     {
+        $this->denyAccessUnlessGranted('ROLE_USER', null, 'Unable to access this page!');
+
         $deleteForm = $this->createDeleteForm($project);
 
         return $this->render('project/show.html.twig', array(
@@ -81,6 +90,8 @@ class ProjectController extends Controller
      */
     public function editAction(Request $request, Project $project)
     {
+        $this->denyAccessUnlessGranted('ROLE_USER', null, 'Unable to access this page!');
+
         $deleteForm = $this->createDeleteForm($project);
         $editForm = $this->createForm('AppBundle\Form\ProjectType', $project);
         $editForm->handleRequest($request);
@@ -106,6 +117,8 @@ class ProjectController extends Controller
      */
     public function deleteAction(Request $request, Project $project)
     {
+        $this->denyAccessUnlessGranted('ROLE_USER', null, 'Unable to access this page!');
+
         $form = $this->createDeleteForm($project);
         $form->handleRequest($request);
 

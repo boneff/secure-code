@@ -5,18 +5,18 @@
 
     <table class="table">
         <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ project.id }}</td>
-            </tr>
-            <tr>
-                <th>Repositoryurl</th>
-                <td>{{ project.repositoryUrl }}</td>
-            </tr>
-            <tr>
-                <th>Datecreated</th>
-                <td>{% if project.dateCreated %}{{ project.dateCreated|date('Y-m-d H:i:s') }}{% endif %}</td>
-            </tr>
+        <tr>
+            <th>Id</th>
+            <td>{{ project.id }}</td>
+        </tr>
+        <tr>
+            <th>Repositoryurl</th>
+            <td>{{ project.repositoryUrl }}</td>
+        </tr>
+        <tr>
+            <th>Datecreated</th>
+            <td>{% if project.dateCreated %}{{ project.dateCreated|date('Y-m-d H:i:s') }}{% endif %}</td>
+        </tr>
         </tbody>
     </table>
 
@@ -29,7 +29,7 @@
         </p>
         <div>
             {{ form_start(delete_form) }}
-                <input class="btn btn-danger" type="submit" value="Delete">
+            <input class="btn btn-danger" type="submit" value="Delete">
             {{ form_end(delete_form) }}
         </div>
     </div>
