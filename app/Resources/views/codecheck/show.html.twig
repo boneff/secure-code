@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Codecheck</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ codeCheck.id }}</td>
+            </tr>
+            <tr>
+                <th>Result</th>
+                <td>{{ codeCheck.result }}</td>
+            </tr>
+            <tr>
+                <th>Issecure</th>
+                <td>{% if codeCheck.isSecure %}Yes{% else %}No{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Datecreated</th>
+                <td>{% if codeCheck.dateCreated %}{{ codeCheck.dateCreated|date('Y-m-d H:i:s') }}{% endif %}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('codecheck_index') }}">Back to the list</a>
+        </li>
+        <li>
+            <a href="{{ path('codecheck_edit', { 'id': codeCheck.id }) }}">Edit</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+                <input type="submit" value="Delete">
+            {{ form_end(delete_form) }}
+        </li>
+    </ul>
+{% endblock %}

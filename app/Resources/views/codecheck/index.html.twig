@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Codechecks list</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Result</th>
+                <th>Issecure</th>
+                <th>Datecreated</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for codeCheck in codeChecks %}
+            <tr>
+                <td><a href="{{ path('codecheck_show', { 'id': codeCheck.id }) }}">{{ codeCheck.id }}</a></td>
+                <td>{{ codeCheck.result }}</td>
+                <td>{% if codeCheck.isSecure %}Yes{% else %}No{% endif %}</td>
+                <td>{% if codeCheck.dateCreated %}{{ codeCheck.dateCreated|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('codecheck_show', { 'id': codeCheck.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('codecheck_edit', { 'id': codeCheck.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('codecheck_new') }}">Create a new codeCheck</a>
+        </li>
+    </ul>
+{% endblock %}
