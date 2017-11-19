@@ -4,6 +4,8 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\CodeCheck;
 use AppBundle\Entity\Project;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -11,11 +13,6 @@ use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Bundle\FrameworkBundle\Console\Application;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Output\BufferedOutput;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
  * Codecheck controller.
@@ -49,31 +46,41 @@ class CodeCheckController extends Controller
      * @Route("/run/{$projectId}", name="codecheck_run")
      * @Method("GET")
      */
-    public function runAction(Request $request, KernelInterface $kernel)
+    public function runAction(Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_USER', null, 'Unable to access this page!');
 
         $em = $this->getDoctrine()->getManager();
-
-        $application = new Application($kernel);
+        /** @var $project Project */
         $project = $em->getRepository('AppBundle:Project')->find($request->get('projectId'));
-        $application->setAutoExit(false);
 
-        $input = new ArrayInput([
-            'command'  => 'security:check',
-            'lockfile' => $this->getRemoteLockFile($project->getRepositoryUrl())
-        ]);
+        $client = new Client();
+        $fileToCheck = $this->getRemoteLockFile($project->getRepositoryUrl());
+        try {
+            $res = $client->request('POST', 'https://security.sensiolabs.org/check_lock', [
+                'multipart' => [
+                    [
+                        'name'     => 'lock',
+                        'contents' => fopen($fileToCheck, 'r'),
+                        'headers' => [
+                            'Accept' => 'application/json',
+                            'User-Agent' => 'curl/7.52.1',
+                        ],
+                    ],
+                ]
+            ]);
+            $statusCode = $res->getStatusCode();
+            $content = $res->getBody();
+        } catch (ClientException $e) {
+            $statusCode = $e->getResponse()->getStatusCode();
+            $content = $e->getResponse()->getBody()->getContents();
+        }
 
-        // You can use NullOutput() if you don't need the output
-        $output = new BufferedOutput();
-        $application->run($input, $output);
-
-        // return the output, don't use if you used NullOutput()
-        $content = $output->fetch();
+        //curl -H "Accept: application/json" https://security.sensiolabs.org/check_lock -F lock=@/path/to/composer.lock
         // $codeCheck = new Codecheck();
 
         return $this->render('codecheck/result.html.twig', array(
-            'checkResult' => $content,
+            'checkResult' => $content ? $content : 'Error' . $statusCode,
         ));
     }
 
