@@ -203,13 +203,18 @@ class CodeCheckController extends Controller
     {
         $filePath = '';
         try {
-            $file = file_get_contents($url
+            //TODO move this logic into separate service
+            $hardcodedGithubUrl = 'https://raw.githubusercontent.com';
+            $repoName = str_replace('https://github.com/', '', $url);
+            $requestUrl = $hardcodedGithubUrl
                 . DIRECTORY_SEPARATOR
-                . 'blob'
+                . $repoName
                 . DIRECTORY_SEPARATOR
                 . 'master'
                 . DIRECTORY_SEPARATOR
-                . 'composer.lock');
+                . 'composer.lock';
+
+            $file = file_get_contents($requestUrl);
         } catch (Exception $e) {
 
         }
