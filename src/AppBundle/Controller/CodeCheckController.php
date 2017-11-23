@@ -4,8 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\CodeCheck;
 use AppBundle\Entity\Project;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
+use SensioLabs\Security\SecurityChecker;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -54,24 +53,11 @@ class CodeCheckController extends Controller
         /** @var $project Project */
         $project = $em->getRepository('AppBundle:Project')->find($request->get('projectId'));
 
-        $client = new Client();
-        $fileToCheck = $this->getRemoteLockFile($project->getRepositoryUrl());
         try {
-            $res = $client->request('POST', 'https://security.sensiolabs.org/check_lock', [
-                'multipart' => [
-                    [
-                        'name'     => 'lock',
-                        'contents' => fopen($fileToCheck, 'r'),
-                        'headers' => [
-                            'Accept' => 'application/json',
-                            'User-Agent' => 'curl/7.52.1',
-                        ],
-                    ],
-                ]
-            ]);
-            $statusCode = $res->getStatusCode();
-            $content = $res->getBody();
-        } catch (ClientException $e) {
+            $securityChecker = new SecurityChecker();
+
+            $content = $securityChecker->check($this->getRemoteLockFile($project->getRepositoryUrl()));
+        } catch (\Exception $e) {
             $statusCode = $e->getResponse()->getStatusCode();
             $content = $e->getResponse()->getBody()->getContents();
         }
