@@ -2,11 +2,10 @@
 
 {% block body %}
 <h1>Check Result</h1>
-    {% for result in checkResult %}
-        {% for resultName in result %}
-            {% for advisory in result.advisories %}
-                <p>{{ advisory.title }}</p>
-            {% endfor %}
+    {% for key, value in checkResult %}
+        <h2>{{ key }}</h2>
+        {% for result in value.advisories %}
+            <p>{{ result.title }}</p>
         {% endfor %}
     {% endfor %}
 {% endblock %}

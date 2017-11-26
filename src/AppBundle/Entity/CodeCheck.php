@@ -27,7 +27,7 @@ class CodeCheck
     /**
      * @var string
      *
-     * @ORM\Column(name="result", type="string", length=255)
+     * @ORM\Column(name="result", type="string", length=2000)
      */
     private $result;
 

@@ -62,8 +62,15 @@ class CodeCheckController extends Controller
             $content = $e->getResponse()->getBody()->getContents();
         }
 
-        //curl -H "Accept: application/json" https://security.sensiolabs.org/check_lock -F lock=@/path/to/composer.lock
-        // $codeCheck = new Codecheck();
+        // curl -H "Accept: application/json" https://security.sensiolabs.org/check_lock -F lock=@/path/to/composer.lock
+        if (!empty($content) && is_array($content)) {
+            $codeCheck = new Codecheck();
+            $codeCheck->setResult(json_encode($content));
+            $codeCheck->setIsSecure(false);
+            $codeCheck->setDateCreated(new \DateTime());
+            $em->persist($codeCheck);
+            $em->flush();
+        }
 
         return $this->render('codecheck/result.html.twig', array(
             'checkResult' => $content ? $content : 'Error' . $statusCode,
