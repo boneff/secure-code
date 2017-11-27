@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Project;
+use AppBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component\HttpFoundation\Request;
@@ -25,8 +26,10 @@ class ProjectController extends Controller
         $this->denyAccessUnlessGranted('ROLE_USER', null, 'Unable to access this page!');
 
         $em = $this->getDoctrine()->getManager();
+        /** @var User $user */
+        $user = $this->getUser();
 
-        $projects = $em->getRepository('AppBundle:Project')->findAll();
+        $projects = $em->getRepository('AppBundle:Project')->findProjectsByUserId($user->getId());
 
         return $this->render('project/index.html.twig', array(
             'projects' => $projects,

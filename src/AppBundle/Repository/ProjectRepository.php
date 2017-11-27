@@ -10,4 +10,16 @@ namespace AppBundle\Repository;
  */
 class ProjectRepository extends \Doctrine\ORM\EntityRepository
 {
+    /**
+     * @param $userId
+     * @return array
+     */
+    public function findProjectsByUserId($userId)
+    {
+        return $this->createQueryBuilder('p')
+            ->innerJoin('p.users', 'u')
+            ->where('u.id = :user_id')
+            ->setParameter('user_id', $userId)
+            ->getQuery()->getResult();
+    }
 }
