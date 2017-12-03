@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\JoinTable;
@@ -55,9 +56,16 @@ class CodeCheck
      */
     private $codeCheckVulnerabilities;
 
+    /**
+     * Many Checks have Many Projects.
+     * @ManyToMany(targetEntity="Project", mappedBy="projectChecks")
+     */
+    private $projects;
+
     public function __construct()
     {
-        $this->codeCheckVulnerabilities = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->codeCheckVulnerabilities = new ArrayCollection();
+        $this->projects = new ArrayCollection();
     }
 
 
@@ -157,6 +165,11 @@ class CodeCheck
     public function setCodeCheckVulnerabilities($codeCheckVulnerabilities)
     {
         $this->codeCheckVulnerabilities = $codeCheckVulnerabilities;
+    }
+
+    public function addProject(Project $project)
+    {
+        $this->projects[] = $project;
     }
 }
 

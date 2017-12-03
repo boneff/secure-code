@@ -68,6 +68,7 @@ class CodeCheckController extends Controller
             $codeCheck->setResult(json_encode($content));
             $codeCheck->setIsSecure(false);
             $codeCheck->setDateCreated(new \DateTime());
+            $project->addCodeCheck($codeCheck);
             $em->persist($codeCheck);
             $em->flush();
         }

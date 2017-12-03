@@ -151,5 +151,14 @@ class Project
         $user->addProject($this); // synchronously updating inverse side
         $this->users[] = $user;
     }
+
+    /**
+     * @param CodeCheck $codeCheck
+     */
+    public function addCodeCheck(CodeCheck $codeCheck)
+    {
+        $codeCheck->addProject($this); // synchronously updating inverse side
+        $this->projectChecks[] = $codeCheck;
+    }
 }
 
