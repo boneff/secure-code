@@ -27,7 +27,7 @@ class Project
     /**
      * @var string
      *
-     * @ORM\Column(name="repository_url", type="string", length=255, unique=true)
+     * @ORM\Column(name="repository_url", type="string", length=255, unique=false)
      */
     private $repositoryUrl;
 
