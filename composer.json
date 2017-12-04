@@ -65,7 +65,14 @@
         "symfony-tests-dir": "tests",
         "symfony-assets-install": "relative",
         "incenteev-parameters": {
-            "file": "app/config/parameters.yml"
+            "file": "app/config/parameters.yml",
+            "env-map": {
+                "database_host": "RDS_HOSTNAME",
+                "database_port": "RDS_PORT",
+                "database_name": "RDS_DB_NAME",
+                "database_user": "RDS_USERNAME",
+                "database_pass": "RDS_PASSWORD"
+            }
         },
         "branch-alias": null
     }
