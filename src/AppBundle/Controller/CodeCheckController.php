@@ -55,11 +55,25 @@ class CodeCheckController extends Controller
 
         try {
             $securityChecker = new SecurityChecker();
-
-            $content = $securityChecker->check($this->getRemoteLockFile($project->getRepositoryUrl()));
+            $fileToCheck = $this->getRemoteLockFile($project->getRepositoryUrl());
+            $fileToCheck1 = $fileToCheck;
+            if (strpos($fileToCheck, 'json') === false) {
+                $content = $securityChecker->check($fileToCheck);
+            } else {
+                // first run composer in given directory if the file is json
+                $workDir = str_replace('composer.json', '', $fileToCheck);
+                if (chdir($workDir)) {
+                    // TODO run composer to generate lock file
+//                    $result = exec('echo \'\' | php /usr/bin/composer install --no-interaction');
+//                    $fileHandle = fopen($workDir . 'composer.lock');
+//                    $fileHandle1 = $fileHandle;
+                } else {
+                    $content = 'We were unable to perform the check at the moment!';
+                }
+            }
         } catch (\Exception $e) {
-            $statusCode = $e->getResponse()->getStatusCode();
-            $content = $e->getResponse()->getBody()->getContents();
+            $statusCode = 400;
+            $content = $e->getMessage();
         }
 
         // curl -H "Accept: application/json" https://security.sensiolabs.org/check_lock -F lock=@/path/to/composer.lock
@@ -141,7 +155,7 @@ class CodeCheckController extends Controller
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             $this->getDoctrine()->getManager()->flush();
 
-            return $this->redirectToRoute('codecheck_edit', array('id' => $codeCheck->getId()));
+            return $this->redirectToRoute('codecheck_index', array('id' => $codeCheck->getId()));
         }
 
         return $this->render('codecheck/edit.html.twig', array(
@@ -196,33 +210,42 @@ class CodeCheckController extends Controller
     private function getRemoteLockFile($url)
     {
         $filePath = '';
-        try {
-            //TODO move this logic into separate service
-            $hardcodedGithubUrl = 'https://raw.githubusercontent.com';
-            $repoName = str_replace('https://github.com/', '', $url);
-            $requestUrl = $hardcodedGithubUrl
-                . DIRECTORY_SEPARATOR
-                . $repoName
-                . DIRECTORY_SEPARATOR
-                . 'master'
-                . DIRECTORY_SEPARATOR
-                . 'composer.lock';
+        $fileForDownload = 'composer.lock';
 
+        $requestUrl = $this->buildRepoUrl($url, $fileForDownload);
+        $file = file_get_contents($requestUrl);
+
+        if ($file == false) {
+            $fileForDownload = 'composer.json';
+            $requestUrl = $this->buildRepoUrl($url, $fileForDownload);
             $file = file_get_contents($requestUrl);
-        } catch (Exception $e) {
-
         }
-
         $fs = new Filesystem();
         try {
             $randomNum = mt_rand();
             $fs->mkdir('/tmp/'.$randomNum);
-            $filePath = '/tmp/' . $randomNum . '/composer.lock';
+            $filePath = '/tmp/' . $randomNum . '/' . $fileForDownload;
             $fs->dumpFile($filePath, $file);
         } catch (IOException $e) {
             echo "An error occurred while creating your directory at ".$e->getPath();
         }
 
         return $filePath;
+    }
+
+    private function buildRepoUrl($url, $fileName)
+    {
+        //TODO move this logic into separate service
+        $hardcodedGithubUrl = 'https://raw.githubusercontent.com';
+        $repoName = str_replace('https://github.com/', '', $url);
+        $requestUrl = $hardcodedGithubUrl
+            . DIRECTORY_SEPARATOR
+            . $repoName
+            . DIRECTORY_SEPARATOR
+            . 'master'
+            . DIRECTORY_SEPARATOR
+            . $fileName;
+
+        return $requestUrl;
     }
 }
