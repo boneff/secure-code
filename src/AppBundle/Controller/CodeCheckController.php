@@ -78,6 +78,7 @@ class CodeCheckController extends Controller
 
         // curl -H "Accept: application/json" https://security.sensiolabs.org/check_lock -F lock=@/path/to/composer.lock
         if (!empty($content) && is_array($content['result'])) {
+            $content['message'] = 'Vulnerabilities found!';
             $codeCheck = new Codecheck();
             $codeCheck->setResult(json_encode($content['result']));
             $codeCheck->setIsSecure(false);
