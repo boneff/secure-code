@@ -48,7 +48,7 @@ class CodeCheckController extends Controller
     public function runAction(Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_USER', null, 'Unable to access this page!');
-
+        $content = 'There were no vulnerabilities found!';
         $em = $this->getDoctrine()->getManager();
         /** @var $project Project */
         $project = $em->getRepository('AppBundle:Project')->find($request->get('projectId'));
