@@ -35,7 +35,7 @@ class ProjectController extends Controller
         return $this->render('project/index.html.twig', array(
             'projects' => $projects,
             'users' => count($allUsers),
-            'projects' => count($allProjects)
+            'allprojects' => count($allProjects)
         ));
     }
 

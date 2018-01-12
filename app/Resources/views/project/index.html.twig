@@ -14,7 +14,7 @@
         </thead>
         <tbody>
         <p>All users: {{ users }}</p>
-        <p>All projects: {{ projects }}</p>
+        <p>All projects: {{ allprojects }}</p>
         {% for project in projects %}
             <tr>
                 <td><a href="{{ path('project_show', { 'id': project.id }) }}">{{ project.id }}</a></td>
