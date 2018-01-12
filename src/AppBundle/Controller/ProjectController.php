@@ -30,9 +30,12 @@ class ProjectController extends Controller
         $user = $this->getUser();
 
         $projects = $em->getRepository('AppBundle:Project')->findProjectsByUserId($user->getId());
-
+        $allProjects = $em->getRepository('AppBundle:Project')->findAll();
+        $allUsers =  $em->getRepository('AppBundle:User')->findAll();
         return $this->render('project/index.html.twig', array(
             'projects' => $projects,
+            'users' => count($allUsers),
+            'projects' => count($allProjects)
         ));
     }
 
