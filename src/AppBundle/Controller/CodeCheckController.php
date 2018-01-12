@@ -48,7 +48,7 @@ class CodeCheckController extends Controller
     public function runAction(Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_USER', null, 'Unable to access this page!');
-        $content = 'There were no vulnerabilities found!';
+        $content['message'] = 'There were no vulnerabilities found!';
         $em = $this->getDoctrine()->getManager();
         /** @var $project Project */
         $project = $em->getRepository('AppBundle:Project')->find($request->get('projectId'));
@@ -58,7 +58,7 @@ class CodeCheckController extends Controller
             $fileToCheck = $this->getRemoteLockFile($project->getRepositoryUrl());
             $fileToCheck1 = $fileToCheck;
             if (strpos($fileToCheck, 'json') === false) {
-                $content = $securityChecker->check($fileToCheck);
+                $content['result'] = $securityChecker->check($fileToCheck);
             } else {
                 // first run composer in given directory if the file is json
                 $workDir = str_replace('composer.json', '', $fileToCheck);
@@ -68,18 +68,18 @@ class CodeCheckController extends Controller
 //                    $fileHandle = fopen($workDir . 'composer.lock');
 //                    $fileHandle1 = $fileHandle;
                 } else {
-                    $content = 'We were unable to perform the check at the moment!';
+                    $content['message'] = 'We were unable to perform the check at the moment!';
                 }
             }
         } catch (\Exception $e) {
             $statusCode = 400;
-            $content = $e->getMessage();
+            $content['message'] = $e->getMessage();
         }
 
         // curl -H "Accept: application/json" https://security.sensiolabs.org/check_lock -F lock=@/path/to/composer.lock
-        if (!empty($content) && is_array($content)) {
+        if (!empty($content) && is_array($content['result'])) {
             $codeCheck = new Codecheck();
-            $codeCheck->setResult(json_encode($content));
+            $codeCheck->setResult(json_encode($content['result']));
             $codeCheck->setIsSecure(false);
             $codeCheck->setDateCreated(new \DateTime());
             $project->addCodeCheck($codeCheck);
@@ -87,9 +87,9 @@ class CodeCheckController extends Controller
             $em->flush();
         }
 
-        return $this->render('codecheck/result.html.twig', array(
-            'checkResult' => $content ? $content : 'Error' . $statusCode,
-        ));
+        return $this->render('codecheck/result.html.twig', [
+            'checkResult' => $content
+        ]);
     }
 
     /**

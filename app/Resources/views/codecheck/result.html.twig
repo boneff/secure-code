@@ -2,7 +2,8 @@
 
 {% block body %}
 <h1>Check Result</h1>
-    {% for key, value in checkResult %}
+    <h2>{{ checkResult['message'] }}</h2>
+    {% for key, value in checkResult['result'] %}
         <h2>{{ key }}</h2>
         {% for result in value.advisories %}
             <p>{{ result.title }}</p>
